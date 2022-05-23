@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import GlitchedWriter from "glitched-writer";
+import { FaHackerrank } from "react-icons/fa";
+import { SiHackerone, SiLeetcode, SiPicartodottv } from "react-icons/si";
 
 const Wrapper = styled.div`
   text-align: center;
@@ -8,7 +10,6 @@ const Wrapper = styled.div`
   border-radius: 5px;
   color: #fff;
   width: 25vw;
-  height: 65vh;
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: column;
@@ -34,7 +35,65 @@ const MetaContent = styled.div`
   gap: 0.8em;
   > h1 {
     font-size: 2.5rem;
-    margin-top: 0;
+    margin: 0;
+  }
+`;
+
+const AnimetedText = styled.div`
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #45f3ff;
+  font-family: "Grape Nuts", cursive;
+  height: 3.5rem;
+`;
+
+const ProfileWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+`;
+const Profile = styled.a`
+  position: relative;
+  /* border: 2px solid #45f3ff; */
+  color: #45f3ff;
+  border-radius: 2.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  /* box-shadow: 0 0 10px rgb(69 243 255 / 75%); */
+  transition: all 0.35s;
+  &:hover {
+    background-color: #45f3ff;
+    color: white;
+  }
+`;
+
+const MetaFooter = styled.div`
+  display: flex;
+  margin-top: 1rem;
+  width: 100%;
+  border-top: 1px solid #555;
+`;
+const FooterButton = styled.a`
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  font-size: 1.15rem;
+  justify-content: center;
+  align-items: center;
+  padding: 1.25rem;
+  transition: all 0.35s;
+  cursor: pointer;
+  &:hover {
+    color: #45f3ff;
+  }
+  &:first-child {
+    border-right: 1px solid #555;
   }
 `;
 
@@ -47,7 +106,16 @@ const ResumeMeta = () => {
     }
 
     const Writer = new GlitchedWriter(writeRed.current, { letterize: true });
-    Writer.write("Hello there!");
+    // Writer.queueWrite(
+    //   [
+    //     "Javascript Maniac",
+    //     "React Hooked",
+    //     "Typescript Obsessed",
+    //     "Node Fanatic",
+    //   ],
+    //   3000,
+    //   true
+    // );
   }, [writeRed.current]);
 
   return (
@@ -55,8 +123,36 @@ const ResumeMeta = () => {
       <MetaImg />
       <MetaContent>
         <h1>Yasin Khan</h1>
-        <div ref={writeRed}></div>
+        <AnimetedText ref={writeRed}></AnimetedText>
+        <ProfileWrapper>
+          <Profile
+            href="https://www.hackerrank.com/wildhound404?hr_r=1"
+            target="_blank"
+          >
+            <FaHackerrank />
+          </Profile>
+          <Profile href="https://leetcode.com/Wild-Hound/" target="_blank">
+            <SiLeetcode />
+          </Profile>
+          <Profile href="https://hackerone.com/yk404?type=user" target="_blank">
+            <SiHackerone />
+          </Profile>
+          <Profile
+            href="https://play.picoctf.org/users/yasin404"
+            target="_blank"
+          >
+            <SiPicartodottv />
+          </Profile>
+        </ProfileWrapper>
       </MetaContent>
+      <MetaFooter>
+        <FooterButton href="https://github.com/Wild-Hound" target="_blank">
+          Linkedin
+        </FooterButton>
+        <FooterButton href="https://www.linkedin.com/in/yk404/" target="_blank">
+          Github
+        </FooterButton>
+      </MetaFooter>
     </Wrapper>
   );
 };

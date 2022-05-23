@@ -15,7 +15,8 @@ const Heading = styled.h1`
   font-size: 3.25rem;
   text-align: center;
   margin-bottom: 0.625rem;
-  font-family: "Grape Nuts", cursive;
+  font-family: "Koulen", cursive;
+  letter-spacing: 2px;
   padding-top: 3.5rem;
 `;
 
