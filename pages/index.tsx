@@ -2,7 +2,18 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styled from "styled-components";
+import QuickLinks from "../Components/Molecules/QuickLinks";
 import InitialSection from "../Components/Sections/InitialSection";
+import PortfolioSection from "../Components/Sections/PortfolioSection";
+
+const MainWrapper = styled.main`
+  display: flex;
+  width: 100%;
+`;
+
+const InnerWrapper = styled.div`
+  width: 100%;
+`;
 
 const Home: NextPage = () => {
   return (
@@ -13,9 +24,14 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <InitialSection />
-      </main>
+      <MainWrapper>
+        <InnerWrapper>
+          <InitialSection />
+          <PortfolioSection />
+        </InnerWrapper>
+
+        <QuickLinks />
+      </MainWrapper>
 
       <footer></footer>
     </div>
