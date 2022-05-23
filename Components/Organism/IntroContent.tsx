@@ -9,7 +9,7 @@ const Wrapper = styled.div`
 `;
 const FocusCircle = styled.div`
   color: hsla(0, 0%, 100%, 0.8);
-  font-size: 4.2vw;
+  font-size: 6rem;
   font-weight: 800;
   position: absolute;
   line-height: 1.4;
@@ -32,15 +32,21 @@ const FocusCircle = styled.div`
     0 0 50px rgba(69, 243, 255, 0.5);
   border: 2px solid rgba(69, 243, 255, 0.5);
   box-shadow: 0 0 35px rgba(69, 243, 255, 0.75);
+  letter-spacing: 5px;
+  font-family: "Koulen", cursive;
+  line-height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const IntroContent = () => {
   return (
     <Wrapper>
       <FocusCircle>
-        <span>
-          Yasin <br /> Khan
-        </span>
+        <span>Yasin</span>
+        <span>Khan</span>
       </FocusCircle>
     </Wrapper>
   );

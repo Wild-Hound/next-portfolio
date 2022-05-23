@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/memoize": "^0.7.5",
     "@react-icons/all-files": "^4.1.0",
     "@types/styled-components": "^5.1.25",
+    "glitched-writer": "^2.0.29",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
