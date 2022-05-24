@@ -31,7 +31,7 @@ const ResumeBody = () => {
   return (
     <Wrapper>
       <SectionHeading>Overview</SectionHeading>
-      <p>Havn't figure anything out :(</p>
+      <p>Havnt figure anything out :(</p>
     </Wrapper>
   );
 };

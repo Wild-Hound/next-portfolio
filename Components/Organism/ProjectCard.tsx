@@ -65,13 +65,22 @@ const ProjectCard = () => {
       <ImageWrapper>
         <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
           <SwiperSlide>
-            <Image src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg" />
+            <Image
+              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
+              alt=""
+            />
           </SwiperSlide>
           <SwiperSlide>
-            <Image src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg" />
+            <Image
+              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
+              alt=""
+            />
           </SwiperSlide>
           <SwiperSlide>
-            <Image src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg" />
+            <Image
+              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
+              alt=""
+            />
           </SwiperSlide>
         </Swiper>
       </ImageWrapper>
