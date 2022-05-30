@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { initGame } from "../../Game/src";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,13 +42,22 @@ const FocusCircle = styled.div`
   align-items: center;
 `;
 
+const GameWindow = styled.canvas`
+  width: 100%;
+  height: 100vh;
+`;
+
 const IntroContent = () => {
+  useEffect(() => {
+    initGame();
+  }, []);
   return (
     <Wrapper>
       <FocusCircle>
         <span>Yasin</span>
         <span>Khan</span>
       </FocusCircle>
+      <GameWindow id="game" />
     </Wrapper>
   );
 };

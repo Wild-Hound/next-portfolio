@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     }
   }
   .swiper.swiper-initialized.swiper-horizontal.swiper-pointer-events.swiper-backface-hidden.mySwiper {
-    height: 100%;
+    height: 100% !important;
   }
   .swiper-button-next,
   .swiper-button-prev {
@@ -65,22 +65,13 @@ const ProjectCard = () => {
       <ImageWrapper>
         <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
           <SwiperSlide>
-            <Image
-              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
-              alt=""
-            />
+            <Image src="./Resource/tempCover.jpeg" alt="" />
           </SwiperSlide>
           <SwiperSlide>
-            <Image
-              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
-              alt=""
-            />
+            <Image src="./Resource/tempCover.jpeg" alt="" />
           </SwiperSlide>
           <SwiperSlide>
-            <Image
-              src="https://pixicodes.com/static/media/blogCover.2a5d7070.jpeg"
-              alt=""
-            />
+            <Image src="./Resource/tempCover.jpeg" alt="" />
           </SwiperSlide>
         </Swiper>
       </ImageWrapper>

@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styled from "styled-components";
 import QuickLinks from "../Components/Molecules/QuickLinks";
+import FeturedProjects from "../Components/Sections/FeturedProjects";
 import InitialSection from "../Components/Sections/InitialSection";
 import PortfolioSection from "../Components/Sections/PortfolioSection";
 
@@ -27,6 +28,7 @@ const Home: NextPage = () => {
       <MainWrapper>
         <InnerWrapper>
           <InitialSection />
+          <FeturedProjects />
           <PortfolioSection />
         </InnerWrapper>
 

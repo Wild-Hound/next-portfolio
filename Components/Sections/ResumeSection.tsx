@@ -18,6 +18,7 @@ const Heading = styled.h1`
   font-family: "Koulen", cursive;
   letter-spacing: 2px;
   padding-top: 3.5rem;
+  margin-top: 0;
 `;
 
 const ResumeWrapper = styled.div`
@@ -25,7 +26,7 @@ const ResumeWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 5rem;
+  padding-top: 5rem;
 `;
 const ResumeInnerWrapper = styled.div`
   display: flex;

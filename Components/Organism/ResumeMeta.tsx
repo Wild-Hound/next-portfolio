@@ -100,23 +100,23 @@ const FooterButton = styled.a`
 const ResumeMeta = () => {
   const writeRed = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!writeRed?.current) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!writeRed?.current) {
+  //     return;
+  //   }
 
-    const Writer = new GlitchedWriter(writeRed.current, { letterize: true });
-    Writer.queueWrite(
-      [
-        "Javascript Maniac",
-        "React Hooked",
-        "Typescript Obsessed",
-        "Node Fanatic",
-      ],
-      3000,
-      true
-    );
-  }, [writeRed]);
+  //   const Writer = new GlitchedWriter(writeRed.current, { letterize: true });
+  //   Writer.queueWrite(
+  //     [
+  //       "Javascript Maniac",
+  //       "React Hooked",
+  //       "Typescript Obsessed",
+  //       "Node Fanatic",
+  //     ],
+  //     3000,
+  //     true
+  //   );
+  // }, [writeRed]);
 
   return (
     <Wrapper>
