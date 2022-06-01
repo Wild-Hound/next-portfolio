@@ -24,9 +24,12 @@ const ProjectGrid = styled.div<{ isEven: boolean }>`
   box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
   transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
   ${({ isEven }) =>
-    isEven ? "grid-area: 1 / 6 / 1 / -1;" : "grid-area: 1 / 6 / 1 / 1;"}
+    isEven ? "grid-area: 1 / 6 / 1 / -1;" : "grid-area: 1 / 8 / 1 / 1;"}
   position: relative;
   z-index: 1;
+  > img {
+    width: 100%;
+  }
 `;
 
 const ProjectOverLine = styled.p`
