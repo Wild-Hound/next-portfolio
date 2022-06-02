@@ -17,17 +17,13 @@ export function initGame() {
     height / 2,
     height / -2,
     400,
-    -250
+    -1700
   );
-  mainCamera.position.set(4, 4, 4);
-  mainCamera.lookAt(0, 0, -1);
+  mainCamera.position.set(4, 2, 4);
+  mainCamera.lookAt(0, 0, 0);
 
-  const scene = new SetupScene();
-  scene.background = new THREE.Color("#1d1d1d");
+  const game = new SetupScene(renderer, mainCamera);
+  game.background = new THREE.Color("#1d1d1d");
 
-  function tick() {
-    renderer.render(scene, mainCamera);
-    requestAnimationFrame(tick);
-  }
-  tick();
+  renderer.render(game, mainCamera);
 }
