@@ -11,6 +11,11 @@ export default class BlasterScene extends THREE.Scene {
     depth: number;
     direction: string;
   }[] = [];
+  overhangs: {
+    threejs: THREE.Mesh<THREE.BoxGeometry, THREE.MeshLambertMaterial>;
+    width: number;
+    depth: number;
+  }[] = [];
   boxHeight = 0.5;
 
   constructor(renderer: THREE.WebGLRenderer, camera: THREE.OrthographicCamera) {
@@ -44,20 +49,75 @@ export default class BlasterScene extends THREE.Scene {
 
   gameEvent() {
     if (!this.gameStarted) {
+      const geometry = new THREE.BoxGeometry(2.5, 0.5, 2.5);
+      const color = new THREE.Color(
+        `hsl(${30 + this.stack.length * 4}, 100%, 50%)`
+      );
+      const material = new THREE.MeshLambertMaterial({ color: color });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(-10, -3.5, 0);
+      super.add(mesh);
+
+      const secondBox = {
+        threejs: mesh,
+        width: 2.5,
+        depth: 2.5,
+        direction: "x",
+      };
+      this.stack.push(secondBox);
+
       this.renderer.setAnimationLoop(() => this.animation());
       this.gameStarted = true;
-    } else {
-      const topLayer = this.stack[this.stack.length - 1];
-      const direction = topLayer.direction;
-
-      const nextX = direction === "x" ? 0 : -10;
-      const nextZ = direction === "z" ? 0 : -10;
-      const newWidth = 2.5;
-      const newHeight = 2.5;
-      const nextDirection = direction === "x" ? "z" : "x";
-
-      this.addLayer(nextX, nextZ, newWidth, newHeight, nextDirection);
+      return;
     }
+    const topLayer = this.stack[this.stack.length - 1];
+    const prevLayer = this.stack[this.stack.length - 2];
+    const direction = topLayer.direction;
+
+    const delta =
+      // @ts-ignore
+      topLayer.threejs.position[direction] -
+      // @ts-ignore
+      prevLayer.threejs.position[direction];
+    const overHangSize = Math.abs(delta);
+    const size = direction === "x" ? topLayer.width : topLayer.depth;
+    const overLap = size - overHangSize;
+
+    if (overLap <= 0) {
+      // game over
+      return;
+    }
+
+    const newWidth = direction === "x" ? overLap : topLayer.width;
+    const newDepth = direction === "z" ? overLap : topLayer.depth;
+
+    topLayer.width = newWidth;
+    topLayer.depth = newDepth;
+
+    // @ts-ignore
+    topLayer.threejs.scale[direction] = overLap / size;
+    // @ts-ignore
+    topLayer.threejs.position[direction] -= delta / 2;
+
+    // overhang
+    const overhangShift = (overLap / 2 + overHangSize / 2) * Math.sign(delta);
+    const overhangX =
+      direction === "x"
+        ? topLayer.threejs.position.x + overhangShift
+        : topLayer.threejs.position.x;
+    const overhangZ =
+      direction === "z"
+        ? topLayer.threejs.position.z + overhangShift
+        : topLayer.threejs.position.z;
+    const overhangWidth = direction === "x" ? overHangSize : newWidth;
+    const overhangDepth = direction === "z" ? overHangSize : newDepth;
+
+    this.addOverhang(overhangX, overhangZ, overhangWidth, overhangDepth);
+
+    const nextX = direction === "x" ? topLayer.threejs.position.x : -10;
+    const nextZ = direction === "y" ? topLayer.threejs.position.z : -10;
+    const nextDirection = direction === "x" ? "z" : "x";
+    this.addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
   }
 
   addLayer(
@@ -70,7 +130,14 @@ export default class BlasterScene extends THREE.Scene {
     const y = this.boxHeight * this.stack.length - 4;
 
     const layer = this.generateBox(x, y, z, width, depth, direction);
+    // @ts-ignore
     this.stack.push(layer);
+  }
+
+  addOverhang(x: number, z: number, width: number, depth: number) {
+    const y = this.boxHeight + (this.stack.length - 1);
+    const overhang = this.generateBox(x, y, z, width, depth, "x");
+    this.overhangs.push(overhang);
   }
 
   generateBox(
@@ -79,7 +146,7 @@ export default class BlasterScene extends THREE.Scene {
     z: number,
     width: number,
     depth: number,
-    direction: string
+    direction?: string
   ) {
     const geometry = new THREE.BoxGeometry(width, this.boxHeight, depth);
 
@@ -93,18 +160,23 @@ export default class BlasterScene extends THREE.Scene {
 
     super.add(mesh);
 
-    return {
-      threejs: mesh,
-      width,
-      depth,
-      direction: direction,
-    };
+    if (direction) {
+      return {
+        threejs: mesh,
+        width,
+        depth,
+        direction: direction,
+      };
+    } else {
+      return {
+        threejs: mesh,
+        width,
+        depth,
+      };
+    }
   }
 
   animation() {
-    if (!this.gameStarted) {
-      return;
-    }
     const speed = 0.15;
 
     const topLayer = this.stack[this.stack.length - 1];
