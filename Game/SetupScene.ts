@@ -40,7 +40,7 @@ export default class BlasterScene extends THREE.Scene {
       threejs: mesh,
       width: 2.5,
       depth: 2.5,
-      direction: "x",
+      direction: "z",
     };
     this.stack.push(firstBox);
 
@@ -85,6 +85,7 @@ export default class BlasterScene extends THREE.Scene {
 
     if (overLap <= 0) {
       // game over
+      console.log("game over");
       return;
     }
 
@@ -115,7 +116,7 @@ export default class BlasterScene extends THREE.Scene {
     this.addOverhang(overhangX, overhangZ, overhangWidth, overhangDepth);
 
     const nextX = direction === "x" ? topLayer.threejs.position.x : -10;
-    const nextZ = direction === "y" ? topLayer.threejs.position.z : -10;
+    const nextZ = direction === "z" ? topLayer.threejs.position.z : -10;
     const nextDirection = direction === "x" ? "z" : "x";
     this.addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
   }
@@ -135,8 +136,12 @@ export default class BlasterScene extends THREE.Scene {
   }
 
   addOverhang(x: number, z: number, width: number, depth: number) {
-    const y = this.boxHeight + (this.stack.length - 1);
-    const overhang = this.generateBox(x, y, z, width, depth, "x");
+    let y = this.boxHeight * (this.stack.length - 1) - 4;
+    if (this.stack.length === 2) {
+      y = -4;
+    }
+    // const y = this.boxHeight + (this.stack.length - 1);
+    const overhang = this.generateBox(x, y, z, width, depth);
     this.overhangs.push(overhang);
   }
 
@@ -148,6 +153,7 @@ export default class BlasterScene extends THREE.Scene {
     depth: number,
     direction?: string
   ) {
+    console.log(x, y, z, direction);
     const geometry = new THREE.BoxGeometry(width, this.boxHeight, depth);
 
     const color = new THREE.Color(
