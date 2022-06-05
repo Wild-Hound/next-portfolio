@@ -1,18 +1,22 @@
 import * as THREE from "three";
+import * as CANNON from "cannon";
 
 export default class BlasterScene extends THREE.Scene {
   gameStarted = false;
   renderer: THREE.WebGLRenderer;
   camera: THREE.OrthographicCamera;
+  world: CANNON.World;
 
   stack: {
     threejs: THREE.Mesh<THREE.BoxGeometry, THREE.MeshLambertMaterial>;
+    cannonjs: CANNON.Body;
     width: number;
     depth: number;
     direction: string;
   }[] = [];
   overhangs: {
     threejs: THREE.Mesh<THREE.BoxGeometry, THREE.MeshLambertMaterial>;
+    cannonjs: CANNON.Body;
     width: number;
     depth: number;
   }[] = [];
@@ -20,6 +24,12 @@ export default class BlasterScene extends THREE.Scene {
 
   constructor(renderer: THREE.WebGLRenderer, camera: THREE.OrthographicCamera) {
     super();
+
+    const world = new CANNON.World();
+    world.gravity.set(0, -10, 0);
+    world.broadphase = new CANNON.NaiveBroadphase();
+    world.solver.iterations = 40;
+    this.world = world;
 
     this.renderer = renderer;
     this.camera = camera;
@@ -30,18 +40,30 @@ export default class BlasterScene extends THREE.Scene {
     directionalLight.position.set(10, 20, 0);
     super.add(directionalLight);
 
+    // threejs
     const geometry = new THREE.BoxGeometry(2.5, 0.5, 2.5);
     const material = new THREE.MeshLambertMaterial({ color: 0xfb8e00 });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, -4, 0);
     super.add(mesh);
 
+    // cannonjs
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(2.5 / 2, this.boxHeight / 2, 2.5 / 2)
+    );
+    const mass = 0;
+    const body = new CANNON.Body({ mass, shape });
+    body.position.set(0, -4, 0);
+    this.world.addBody(body);
+
     const firstBox = {
       threejs: mesh,
+      cannonjs: body,
       width: 2.5,
       depth: 2.5,
       direction: "z",
     };
+
     this.stack.push(firstBox);
 
     window.addEventListener("click", () => this.gameEvent());
@@ -53,13 +75,24 @@ export default class BlasterScene extends THREE.Scene {
       const color = new THREE.Color(
         `hsl(${30 + this.stack.length * 4}, 100%, 50%)`
       );
+      // threejs
       const material = new THREE.MeshLambertMaterial({ color: color });
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(-10, -3.5, 0);
       super.add(mesh);
 
+      // cannonjs
+      const shape = new CANNON.Box(
+        new CANNON.Vec3(2.5 / 2, this.boxHeight / 2, 2.5 / 2)
+      );
+      const mass = 0;
+      const body = new CANNON.Body({ mass, shape });
+      body.position.set(-10, -3.5, 0);
+      this.world.addBody(body);
+
       const secondBox = {
         threejs: mesh,
+        cannonjs: body,
         width: 2.5,
         depth: 2.5,
         direction: "x",
@@ -99,6 +132,15 @@ export default class BlasterScene extends THREE.Scene {
     topLayer.threejs.scale[direction] = overLap / size;
     // @ts-ignore
     topLayer.threejs.position[direction] -= delta / 2;
+    // update cannonjs model
+    // @ts-ignore
+    topLayer.cannonjs.position[direction] -= delta / 2;
+
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(newWidth / 2, this.boxHeight / 2, newDepth / 2)
+    );
+    topLayer.cannonjs.shapes = [];
+    topLayer.cannonjs.addShape(shape);
 
     // overhang
     const overhangShift = (overLap / 2 + overHangSize / 2) * Math.sign(delta);
@@ -130,7 +172,7 @@ export default class BlasterScene extends THREE.Scene {
   ) {
     const y = this.boxHeight * this.stack.length - 4;
 
-    const layer = this.generateBox(x, y, z, width, depth, direction);
+    const layer = this.generateBox(x, y, z, width, depth, false, direction);
     // @ts-ignore
     this.stack.push(layer);
   }
@@ -141,7 +183,7 @@ export default class BlasterScene extends THREE.Scene {
       y = -4;
     }
     // const y = this.boxHeight + (this.stack.length - 1);
-    const overhang = this.generateBox(x, y, z, width, depth);
+    const overhang = this.generateBox(x, y, z, width, depth, true);
     this.overhangs.push(overhang);
   }
 
@@ -151,35 +193,43 @@ export default class BlasterScene extends THREE.Scene {
     z: number,
     width: number,
     depth: number,
+    falls: boolean,
     direction?: string
   ) {
-    console.log(x, y, z, direction);
+    // threejs
     const geometry = new THREE.BoxGeometry(width, this.boxHeight, depth);
-
     const color = new THREE.Color(
       `hsl(${30 + this.stack.length * 4}, 100%, 50%)`
     );
     const meterial = new THREE.MeshLambertMaterial({ color });
-
     const mesh = new THREE.Mesh(geometry, meterial);
     mesh.position.set(x, y + this.boxHeight, z);
-
     super.add(mesh);
+
+    // cannonjs
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(width / 2, this.boxHeight / 2, depth / 2)
+    );
+    const mass = falls ? 5 : 0;
+    const body = new CANNON.Body({ mass, shape });
+    body.position.set(x, y, z);
+    this.world.addBody(body);
 
     if (direction) {
       return {
         threejs: mesh,
+        cannonjs: body,
         width,
         depth,
         direction: direction,
       };
-    } else {
-      return {
-        threejs: mesh,
-        width,
-        depth,
-      };
     }
+    return {
+      threejs: mesh,
+      cannonjs: body,
+      width,
+      depth,
+    };
   }
 
   animation() {
@@ -188,10 +238,24 @@ export default class BlasterScene extends THREE.Scene {
     const topLayer = this.stack[this.stack.length - 1];
     // @ts-ignore
     topLayer.threejs.position[topLayer.direction] += speed;
+    // @ts-ignore
+    topLayer.cannonjs.position[topLayer.direction] += speed;
 
     if (this.camera.position.y < this.boxHeight * this.stack.length - 1) {
       this.camera.position.y += speed;
     }
+
+    this.updatePhysics();
     this.renderer.render(this, this.camera);
+  }
+
+  updatePhysics() {
+    this.world.step(1 / 60);
+    this.overhangs.forEach((element) => {
+      // @ts-ignore
+      element.threejs.position.copy(element.cannonjs.position);
+      // @ts-ignore
+      element.threejs.quaternion.copy(element.cannonjs.quaternion);
+    });
   }
 }
