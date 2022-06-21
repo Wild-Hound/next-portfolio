@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { initGame } from "../../Game/src";
+import { initGame, startGame } from "../../Game/src";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -147,6 +147,22 @@ const TopPatlers = styled.ol`
     padding: 0;
   }
 `;
+const ResumeGameButton = styled.button`
+  border: 1px solid #45f3ff;
+  margin-top: 1.75rem;
+  padding: 1rem;
+  border-radius: 0.35rem;
+  background-color: #ecf0f116;
+  outline: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: white;
+  width: 100%;
+  transition: all 0.35s;
+  &:hover {
+    background-color: #45f3ff9d;
+  }
+`;
 const IntroContent = () => {
   const [gameScore, setGameScore] = useState(0);
   const [gameState, setGameState] = useState("init");
@@ -167,6 +183,14 @@ const IntroContent = () => {
     }
 
     if (gameState === "started") {
+      if (!gameOverScreenRef.current) {
+        return;
+      }
+
+      const gameoverScreen = gameOverScreenRef.current;
+      gameoverScreen.style.display = "none";
+      console.log(gameoverScreen);
+
       backgroundSoundRef.current.play();
       backgroundSoundRef.current.onended = () => {
         if (!backgroundSoundRef.current) {
@@ -186,7 +210,7 @@ const IntroContent = () => {
       const gameoverScreen = gameOverScreenRef.current;
       gameoverScreen.style.display = "flex";
     }
-  }, [gameState, backgroundSoundRef]);
+  }, [gameState]);
 
   function gameOverMeta() {
     return (
@@ -204,6 +228,14 @@ const IntroContent = () => {
           <li>Shejan</li>
           <li>Arafat</li>
         </TopPatlers>
+        <ResumeGameButton
+          onClick={() => {
+            setGameScore(0);
+            startGame();
+          }}
+        >
+          Resume
+        </ResumeGameButton>
       </div>
     );
   }

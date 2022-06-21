@@ -77,6 +77,7 @@ export function initGame(
     canvas: gameWindow,
     antialias: true,
   });
+  renderer.setClearColor("#1d1d1d");
   renderer.setSize(width, height);
   renderer.setAnimationLoop(animation);
 
@@ -252,12 +253,13 @@ function cutBox(topLayer: any, overlap: number, size: any, delta: number) {
   topLayer.cannonjs.addShape(shape);
 }
 
-function startGame() {
+export function startGame() {
   initTrigger = false;
   gameEnded = false;
   lastTime = 0;
   stack = [];
   overhangs = [];
+  score = 0;
   updateGameState("started");
 
   if (world) {
