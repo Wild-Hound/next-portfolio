@@ -12,12 +12,25 @@ const boxHeight = 0.5; // Height of each layer
 const originalBoxSize = 2.5; // Original width and height of a box
 let gameEnded: boolean;
 let initTrigger = true;
+let score: number;
+let updateScore: React.Dispatch<React.SetStateAction<number>>;
+let rewardSound: HTMLAudioElement;
+let updateGameState: React.Dispatch<React.SetStateAction<string>>;
 
-export function initGame() {
+export function initGame(
+  gameScore: number,
+  updateGameScore: React.Dispatch<React.SetStateAction<number>>,
+  gameRewardSound: HTMLAudioElement,
+  UpdateGameState: React.Dispatch<React.SetStateAction<string>>
+) {
   gameEnded = false;
   lastTime = 0;
   stack = [];
   overhangs = [];
+  score = gameScore;
+  updateScore = updateGameScore;
+  rewardSound = gameRewardSound;
+  updateGameState = UpdateGameState;
 
   // Initialize CannonJS
   world = new CANNON.World();
@@ -67,7 +80,8 @@ export function initGame() {
   renderer.setSize(width, height);
   renderer.setAnimationLoop(animation);
 
-  window.addEventListener("mousedown", eventHandler);
+  // @ts-ignore
+  document.getElementById("game").addEventListener("mousedown", eventHandler);
 }
 
 function addLayer(
@@ -77,7 +91,7 @@ function addLayer(
   depth: number,
   direction?: string
 ) {
-  const y = boxHeight * stack.length; // Add the new box one layer higher
+  const y = boxHeight * stack.length - 2.5; // Add the new box one layer higher
   const layer = generateBox(x, y, z, width, depth, false);
   if (direction) {
     // @ts-ignore
@@ -88,7 +102,7 @@ function addLayer(
 }
 
 function addOverhang(x: number, z: number, width: number, depth: number) {
-  const y = boxHeight * (stack.length - 1); // Add the new box one the same layer
+  const y = boxHeight * (stack.length - 1) - 2.5; // Add the new box one the same layer
   const overhang = generateBox(x, y, z, width, depth, true);
   overhangs.push(overhang);
 }
@@ -129,6 +143,7 @@ function generateBox(
 }
 
 function missedTheSpot() {
+  updateGameState("game over");
   const topLayer = stack[stack.length - 1];
 
   // Turn to top layer into an overhang and let it fall down
@@ -142,6 +157,27 @@ function missedTheSpot() {
   scene.remove(topLayer.threejs);
 
   gameEnded = true;
+}
+
+function perfect(topLayer: any, prevLayer: any) {
+  const topX = topLayer.threejs.position.x;
+  const topZ = topLayer.threejs.position.z;
+  const prevX = prevLayer.threejs.position.x;
+  const prevZ = prevLayer.threejs.position.z;
+  const direction = topLayer.direction;
+  const diffTolarance = 0.00558;
+  // 0.00058
+  const diffrance =
+    direction === "x" ? Math.abs(topX - prevX) : Math.abs(topZ - prevZ);
+
+  if (diffrance < diffTolarance) {
+    if (!rewardSound.paused) {
+      rewardSound.currentTime = 0;
+    }
+    rewardSound.play();
+  } else {
+    console.log("not perfect :(");
+  }
 }
 
 function splitBlockAndAddNextOneIfOverlaps() {
@@ -159,6 +195,7 @@ function splitBlockAndAddNextOneIfOverlaps() {
   const overhangSize = Math.abs(delta);
   const overlap = size - overhangSize;
 
+  perfect(topLayer, previousLayer);
   if (overlap > 0) {
     cutBox(topLayer, overlap, size, delta);
 
@@ -185,6 +222,7 @@ function splitBlockAndAddNextOneIfOverlaps() {
     const nextDirection = direction == "x" ? "z" : "x";
 
     addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
+    updateScore(++score);
   } else {
     missedTheSpot();
   }
@@ -220,6 +258,7 @@ function startGame() {
   lastTime = 0;
   stack = [];
   overhangs = [];
+  updateGameState("started");
 
   if (world) {
     // Remove every object from world
@@ -272,7 +311,7 @@ function animation(time: number) {
     }
 
     // 4 is the initial camera height
-    if (camera.position.y < boxHeight * (stack.length - 2) + 4) {
+    if (camera.position.y < boxHeight * (stack.length - 2) + 1) {
       camera.position.y += speed * timePassed;
     }
 
