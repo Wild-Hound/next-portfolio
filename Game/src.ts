@@ -176,8 +176,6 @@ function perfect(topLayer: any, prevLayer: any) {
       rewardSound.currentTime = 0;
     }
     rewardSound.play();
-  } else {
-    console.log("not perfect :(");
   }
 }
 
@@ -324,7 +322,7 @@ function animation(time: number) {
 }
 
 function updatePhysics(timePassed: number) {
-  world.step(timePassed / 1000); // Step the physics world
+  world.step(0.0095); // Step the physics world timePassed / 1000
 
   // Copy coordinates from Cannon.js to Three.js
   overhangs.forEach((element) => {
