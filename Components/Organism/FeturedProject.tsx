@@ -1,5 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
 
 const Wrapper = styled.div`
   position: relative;
@@ -30,11 +34,17 @@ const ProjectGrid = styled.div<{ isEven: boolean }>`
   > img {
     width: 100%;
   }
+  .swiper-pagination-bullet {
+    background-color: #bdc3c7;
+    border-radius: 3px;
+    width: 1.5rem;
+    height: 0.25rem;
+  }
 `;
 
 const ProjectOverLine = styled.p`
   margin: 10px 0px;
-  color: #64ffda;
+  color: #45f3ff;
   font-weight: 400;
 `;
 const ProjectTitle = styled.h3`
@@ -47,7 +57,7 @@ const ProjectTitle = styled.h3`
     transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
   }
   > a:hover {
-    color: #64ffda;
+    color: #45f3ff;
   }
 `;
 const ProjectDescription = styled.div`
@@ -66,7 +76,7 @@ const ProjectDescription = styled.div`
     text-decoration-skip-ink: auto;
     position: relative;
     transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-    color: #64ffda;
+    color: #45f3ff;
   }
 `;
 const TechList = styled.ul<{ isEven: boolean }>`
@@ -87,6 +97,8 @@ const TechList = styled.ul<{ isEven: boolean }>`
     margin: 0px 0px 5px 20px;
   }
 `;
+
+const Image = styled.img``;
 
 interface Props {
   isEven: boolean;
@@ -154,7 +166,27 @@ const FeturedProject: React.FC<Props> = ({ isEven }) => {
         </div>
       </ProjectContent>
       <ProjectGrid isEven={isEven}>
-        <img src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif" />
+        <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
+          <SwiperSlide>
+            <Image
+              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
+              alt=""
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
+              alt=""
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
+              alt=""
+            />
+          </SwiperSlide>
+        </Swiper>
+        {/* <img src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif" /> */}
       </ProjectGrid>
     </Wrapper>
   );
