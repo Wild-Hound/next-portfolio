@@ -71,6 +71,7 @@ const GameScoreCount = styled.div`
   background-color: transparent;
   color: white;
   font-family: "Koulen", cursive;
+  display: none;
 `;
 
 const PlayerScoreWrapper = styled.div`
@@ -169,6 +170,7 @@ const IntroContent = () => {
   const rewardSoundRef = useRef<HTMLAudioElement>(null);
   const backgroundSoundRef = useRef<HTMLAudioElement>(null);
   const gameOverScreenRef = useRef<HTMLDivElement>(null);
+  const gameScroceEleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!rewardSoundRef.current) {
@@ -183,12 +185,13 @@ const IntroContent = () => {
     }
 
     if (gameState === "started") {
-      if (!gameOverScreenRef.current) {
+      if (!gameOverScreenRef.current || !gameScroceEleRef.current) {
         return;
       }
 
       const gameoverScreen = gameOverScreenRef.current;
       gameoverScreen.style.display = "none";
+      gameScroceEleRef.current.style.display = "block";
       console.log(gameoverScreen);
 
       backgroundSoundRef.current.play();
@@ -203,12 +206,13 @@ const IntroContent = () => {
     if (gameState === "game over") {
       backgroundSoundRef.current.currentTime = 0;
       backgroundSoundRef.current.pause();
-      if (!gameOverScreenRef.current) {
+      if (!gameOverScreenRef.current || !gameScroceEleRef.current) {
         return;
       }
 
       const gameoverScreen = gameOverScreenRef.current;
       gameoverScreen.style.display = "flex";
+      gameScroceEleRef.current.style.display = "none";
     }
   }, [gameState]);
 
@@ -255,7 +259,7 @@ const IntroContent = () => {
         </audio>
         <GameWindow id="game" />
         <GameOverlay ref={gameOverScreenRef}>{gameOverMeta()}</GameOverlay>
-        <GameScoreCount>{gameScore}</GameScoreCount>
+        <GameScoreCount ref={gameScroceEleRef}>{gameScore}</GameScoreCount>
       </GameWrapper>
     </Wrapper>
   );
