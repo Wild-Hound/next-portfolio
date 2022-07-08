@@ -98,12 +98,15 @@ const TechList = styled.ul<{ isEven: boolean }>`
   }
 `;
 
-const Image = styled.img``;
+const Image = styled.img`
+  object-position: center;
+`;
 
 interface Props {
   isEven: boolean;
+  imgLinks: string[];
 }
-const FeturedProject: React.FC<Props> = ({ isEven }) => {
+const FeturedProject: React.FC<Props> = ({ isEven, imgLinks }) => {
   return (
     <Wrapper>
       <ProjectContent isEven={isEven}>
@@ -167,26 +170,14 @@ const FeturedProject: React.FC<Props> = ({ isEven }) => {
       </ProjectContent>
       <ProjectGrid isEven={isEven}>
         <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-          <SwiperSlide>
-            <Image
-              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
-              alt=""
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
-              alt=""
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif"
-              alt=""
-            />
-          </SwiperSlide>
+          {imgLinks.map((link, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <Image src={`./Resource/portfolioImages/${link}`} alt="" />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
-        {/* <img src="https://brittanychiang.com/static/3b4d6e8f44baf7e6d7a0ed4b3e4d8d39/f47db/halcyon.avif" /> */}
       </ProjectGrid>
     </Wrapper>
   );

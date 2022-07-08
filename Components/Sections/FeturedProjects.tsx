@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import FeturedProject from "../Organism/FeturedProject";
 
@@ -33,12 +33,25 @@ const ProjectsWrapper = styled.div`
 const Project = styled.div``;
 
 const FeturedProjects = () => {
+  const [jsonData, setJsonData] = useState<string[][]>();
+
+  useEffect(() => {
+    fetch("./Resource/resource.json")
+      .then((res) => res.json())
+      .then((data) => setJsonData(data));
+  }, []);
+
   return (
     <Wrapper>
       <Heading>Some Things I’ve Built</Heading>
       <ProjectsWrapper>
-        <FeturedProject isEven={1 % 2 ? false : true} />
-        <FeturedProject isEven={2 % 2 ? false : true} />
+        {jsonData?.map((data, index) => (
+          <FeturedProject
+            imgLinks={data}
+            isEven={index % 2 ? true : false}
+            key={index}
+          />
+        ))}
       </ProjectsWrapper>
     </Wrapper>
   );
