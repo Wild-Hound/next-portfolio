@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { initGame, startGame } from "../../Game/src";
+import { commitUserScore } from "../../Lib/Comit";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -167,6 +168,8 @@ const ResumeGameButton = styled.button`
 const IntroContent = () => {
   const [gameScore, setGameScore] = useState(0);
   const [gameState, setGameState] = useState("init");
+  const [playerName, setPlayerName] = useState<string>();
+  const [payersData, setPlayersData] = useState<any[]>();
   const rewardSoundRef = useRef<HTMLAudioElement>(null);
   const backgroundSoundRef = useRef<HTMLAudioElement>(null);
   const gameOverScreenRef = useRef<HTMLDivElement>(null);
@@ -213,27 +216,50 @@ const IntroContent = () => {
       const gameoverScreen = gameOverScreenRef.current;
       gameoverScreen.style.display = "flex";
       gameScroceEleRef.current.style.display = "none";
+
+      getPayersData();
     }
   }, [gameState]);
+
+  async function getPayersData() {
+    console.log("getting players data");
+    const res = await fetch(`http://localhost:3500/users`).then((res) =>
+      res.json()
+    );
+    setPlayersData(res);
+  }
 
   function gameOverMeta() {
     return (
       <div>
         <PlayerScoreWrapper>Your Score: {gameScore}</PlayerScoreWrapper>
         <NameSubmitWrapper>
-          <NameInput placeholder="Enter your name" />
+          <NameInput
+            placeholder="Enter your name"
+            onChange={(val) => setPlayerName(val.target.value)}
+          />
           <NameSubmit>Submit</NameSubmit>
         </NameSubmitWrapper>
 
         <MaxScoreWrapper>Max Scoce: 35</MaxScoreWrapper>
         <TopPatlers>
           <p>Top players</p>
-          <li>Yasin</li>
-          <li>Shejan</li>
-          <li>Arafat</li>
+          {payersData?.map((player) => {
+            return (
+              <li>
+                {player?.name} - {player?.score}
+              </li>
+            );
+          })}
         </TopPatlers>
         <ResumeGameButton
           onClick={() => {
+            if (!playerName) {
+              return;
+            }
+
+            commitUserScore(playerName, gameScore);
+            return;
             setGameScore(0);
             startGame();
           }}
