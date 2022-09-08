@@ -4,8 +4,6 @@ pipeline {
         stages{
             stage("Build") {
                 steps {
-                    sh "cd /"
-                    sh "source ~/.bashrc"
                     sh "npm install"
                     sh "npm build"
                     sh "npm export"
