@@ -37,7 +37,7 @@ const ResumeInnerWrapper = styled.div`
 const ResumeSection = () => {
   return (
     <Wrapper>
-      <Heading>About Me</Heading>
+      <Heading>Hello World</Heading>
       <ResumeWrapper>
         <ResumeInnerWrapper>
           <ResumeMeta />
